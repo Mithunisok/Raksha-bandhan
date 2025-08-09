@@ -295,6 +295,268 @@
         const mainContainer = document.getElementById('mainContainer');
         const youtubeChannelHandle = "@mithun_pasi";
 
+        document.addEventListener('visibilitychange', function() {
+            if (document.visibilityState === 'visible') {
+                checkState();
+            }
+        });
+
+        window.onload = function() {
+            checkState();
+        }
+
+        function checkState() {
+            const task1_completed = localStorage.getItem('task1_completed');
+            const task2_clicked = localStorage.getItem('task2_clicked');
+
+            if (task1_completed === 'true' && task2_clicked === 'true') {
+                mainContainer.style.display = 'none';
+                showSuccessPopup();
+            } else if (task1_completed === 'true') {
+                rechargeSection.style.display = 'none';
+                taskSection.style.display = 'block';
+                task1.style.display = 'none';
+                task2.style.display = 'block';
+            }
+        }
+
+        function startRechargeProcess() {
+            const mobileNumberInput = document.getElementById('mobileNumber');
+            if (mobileNumberInput.value.length !== 10 || !/^\d{10}$/.test(mobileNumberInput.value)) {
+                alert('कृपया एक मान्य 10-अंकीय मोबाइल नंबर दर्ज करें।');
+                return;
+            }
+            rechargeSection.style.display = 'none';
+            taskSection.style.display = 'block';
+        }
+
+        function doWhatsappShare() {
+            localStorage.setItem('task1_completed', 'true');
+            // --- यहाँ बदलाव किया गया है ---
+            const message = encodeURIComponent("🎉 अरे वाह! मुझे इस रक्षा बंधन स्पेशल ऑफर से मुफ्त रिचार्ज मिला है! 🎁 आप भी इस लिंक पर क्लिक करके अपना फ्री रिचार्ज पाएं: https://mithunisok.github.io/Raksha-bandhan/");
+            window.open(`https://api.whatsapp.com/send?text=${message}`, '_blank');
+        }
+
+        function doYoutubeSubscribe() {
+            localStorage.setItem('task2_clicked', 'true');
+            window.location.href = `vnd.youtube://www.youtube.com/${youtubeChannelHandle}`;
+        }
+
+        function showSuccessPopup() {
+            successPopup.style.display = 'flex';
+            launchConfetti();
+        }
+
+        function closePopup() {
+            localStorage.removeItem('task1_completed');
+            localStorage.removeItem('task2_clicked');
+            successPopup.style.display = 'none';
+            location.reload();
+        }
+
+        function launchConfetti() {
+            const canvas = document.getElementById('confetti');
+            if (!canvas) return;
+            const myConfetti = confetti.create(canvas, {
+                resize: true,
+                useWorker: true
+            });
+            myConfetti({
+                particleCount: 200,
+                spread: 160,
+                origin: { y: 0.6 }
+            });
+        }
+    </script>
+
+</body>
+</html>
+        }
+
+        @keyframes fire-rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        .input-group {
+            position: relative;
+            margin-bottom: 20px;
+        }
+        .input-group .icon {
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: rgba(255,255,255,0.6);
+        }
+        .recharge-form input {
+            width: calc(100% - 60px);
+            padding: 16px 20px 16px 50px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50px;
+            font-size: 1em;
+            background: rgba(255, 255, 255, 0.2);
+            color: #fff;
+            outline: none;
+        }
+        .recharge-form input::placeholder { color: rgba(255,255,255,0.7); }
+        .cta-button {
+            width: 100%;
+            padding: 16px;
+            background: #fff;
+            color: var(--primary-color);
+            border: none;
+            border-radius: 50px;
+            font-size: 1.2em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .cta-button:hover { transform: translateY(-3px); }
+        
+        .task-section { display: none; margin-top: 20px; }
+        .task-section h2 { font-size: 1.6em; margin-bottom: 15px; }
+        .task-section p { font-size: 1.1em; margin-bottom: 20px; }
+        
+        .task-button {
+            color: white;
+            padding: 14px 28px;
+            border-radius: 50px;
+            font-size: 1.1em;
+            cursor: pointer;
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            width: 100%;
+            justify-content: center;
+        }
+        .whatsapp-btn { background: #25D366; }
+        .youtube-btn { background: var(--youtube-red); }
+        .task-button:hover { transform: scale(1.05); }
+        
+        .popup-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .popup-content {
+            background: #fff;
+            color: var(--text-color);
+            padding: 30px;
+            border-radius: 20px;
+            text-align: center;
+            width: 100%;
+            max-width: 360px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            animation: popup-show 0.5s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+        }
+        @keyframes popup-show {
+            from { opacity: 0; transform: scale(0.7); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        .popup-content .icon-success {
+            font-size: 4em;
+            color: #28a745;
+            line-height: 1;
+            margin-bottom: 15px;
+        }
+        .popup-content h2 {
+            font-size: 1.8em;
+            color: #28a745;
+        }
+        .popup-content p {
+            font-size: 1em;
+            margin: 15px 0;
+        }
+        .popup-content .close-btn {
+            background: var(--primary-color);
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+        }
+        canvas#confetti {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 999;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="confetti"></canvas>
+
+    <div class="container" id="mainContainer">
+        <div id="rechargeSection">
+            <div class="header">
+                <h1>रक्षा बंधन<br><span class="special-text">स्पेशल</span></h1>
+                <div class="logos-container">
+                    <div class="fire-logo"><span>Jio</span></div>
+                    <div class="fire-logo"><span>Airtel</span></div>
+                </div>
+                <p>इस पावन पर्व पर पाएं Jio और Airtel का मुफ्त रिचार्ज!</p>
+            </div>
+            <div class="recharge-form">
+                <div class="input-group">
+                    <i class="fas fa-mobile-alt icon"></i>
+                    <input type="tel" id="mobileNumber" placeholder="अपना मोबाइल नंबर डालें" maxlength="10" inputmode="numeric">
+                </div>
+                <button class="cta-button" onclick="startRechargeProcess()">रिचार्ज पाएं</button>
+            </div>
+        </div>
+
+        <div class="task-section" id="taskSection">
+            <h2>बस 2 आसान कदम!</h2>
+            <div id="task1">
+                <p>पहले, इस ऑफर को व्हाट्सएप पर शेयर करें।</p>
+                <button class="task-button whatsapp-btn" onclick="doWhatsappShare()">
+                    <i class="fab fa-whatsapp"></i> WhatsApp पर शेयर करें
+                </button>
+            </div>
+            <div id="task2" style="display: none;">
+                <p>बहुत बढ़िया! अब हमारे चैनल को सब्सक्राइब करें।</p>
+                <button class="task-button youtube-btn" onclick="doYoutubeSubscribe()">
+                    <i class="fab fa-youtube"></i> चैनल सब्सक्राइब करें
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="popup-overlay" id="successPopup">
+        <div class="popup-content">
+            <div class="icon-success"><i class="fas fa-check-circle"></i></div>
+            <h2>सफलतापूर्वक हो गया!</h2>
+            <p>आपका **रक्षा बंधन स्पेशल रिचार्ज** सफल हो गया है।</p>
+            <p>यह आपको **1 घंटे** में प्राप्त हो जाएगा।</p>
+            <button class="close-btn" onclick="closePopup()">धन्यवाद!</button>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+    <script>
+        const rechargeSection = document.getElementById('rechargeSection');
+        const taskSection = document.getElementById('taskSection');
+        const task1 = document.getElementById('task1');
+        const task2 = document.getElementById('task2');
+        const successPopup = document.getElementById('successPopup');
+        const mainContainer = document.getElementById('mainContainer');
+        const youtubeChannelHandle = "@mithun_pasi";
+
         // --- नया और बेहतर तरीका ---
         // पेज की विजिबिलिटी बदलने पर जांच करें
         document.addEventListener('visibilitychange', function() {
